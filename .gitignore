@@ -12,3 +12,4 @@ __pycache__/
 /agents/orchestrator/__pycache__/
 /agents/orchestrator/htmlcov/
 /agents/orchestrator/.pytest_cache/
+__pycache__/
