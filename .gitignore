@@ -13,3 +13,4 @@ __pycache__/
 /agents/orchestrator/htmlcov/
 /agents/orchestrator/.pytest_cache/
 __pycache__/
+frontend/node_modules/
