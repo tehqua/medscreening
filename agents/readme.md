@@ -1,4 +1,4 @@
-# Medical Chatbot Orchestrator
+﻿# Medical Chatbot Orchestrator
 
 A LangGraph-based orchestration layer for a medical consultation chatbot system that coordinates between multiple specialized AI agents.
 
@@ -97,7 +97,7 @@ curl http://localhost:11434/api/tags
 Ensure your project has this structure:
 
 ```
-medscreening/
+Vitalis/
 ├── agents/
 │   ├── orchestrator/          # This package
 │   │   ├── __init__.py

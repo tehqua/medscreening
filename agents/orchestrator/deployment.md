@@ -1,4 +1,4 @@
-# Orchestrator Deployment Guide
+﻿# Orchestrator Deployment Guide
 
 Complete step-by-step guide for deploying the Medical Chatbot Orchestrator.
 
@@ -18,7 +18,7 @@ Before starting, ensure you have:
 
 ```bash
 # Navigate to your project directory
-cd C:\Users\lammi\Downloads\medscreening
+cd C:\Users\lammi\Downloads\Vitalis
 
 # Create orchestrator directory
 mkdir agents\orchestrator
@@ -365,7 +365,7 @@ curl -X POST http://localhost:8000/chat/with-image \
 **Solution:**
 ```bash
 # Ensure you're in project root
-cd C:\Users\lammi\Downloads\medscreening
+cd C:\Users\lammi\Downloads\Vitalis
 
 # Verify PYTHONPATH
 python -c "import sys; print('\n'.join(sys.path))"

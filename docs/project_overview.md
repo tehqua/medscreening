@@ -1,8 +1,8 @@
-# Project Overview: AI-Powered Medical Consultation System
+﻿# Project Overview: AI-Powered Medical Consultation System
 
 ## 🎯 Introduction
 
-**MedScreening** is an AI Agent system designed to provide intelligent medical consultation services for hospital patients. The system combines advanced AI technology with electronic medical record databases to deliver personalized, accurate, and convenient healthcare consultation experiences.
+**Vitalis** is an AI Agent system designed to provide intelligent medical consultation services for hospital patients. The system combines advanced AI technology with electronic medical record databases to deliver personalized, accurate, and convenient healthcare consultation experiences.
 
 ---
 
@@ -32,7 +32,7 @@ Patients often face challenges when:
 
 ## 💡 Solution
 
-**MedScreening** provides a comprehensive AI Agent system with the following features:
+**Vitalis** provides a comprehensive AI Agent system with the following features:
 
 ### ✅ **Intelligent Medical Consultation**
 
@@ -258,7 +258,7 @@ The system utilizes **over 1,000 detailed medical records** in FHIR (Fast Health
 
 ### ⚠️ **Medical Disclaimer**
 
-> **MedScreening is a consultation support tool, NOT a replacement for real doctors.**
+> **Vitalis is a consultation support tool, NOT a replacement for real doctors.**
 
 - The system provides reference information
 - Always recommends seeing a doctor when necessary
@@ -303,4 +303,4 @@ The system utilizes **over 1,000 detailed medical records** in FHIR (Fast Health
 
 ---
 
-**MedScreening** - *AI-Powered Healthcare for You* 🏥💙
+**Vitalis** - *AI-Powered Healthcare for You* 🏥💙

@@ -1,4 +1,4 @@
-# Backend Deployment Guide
+﻿# Readme - Backend Deployment Guide
 
 Complete step-by-step guide for deploying the Medical Chatbot Backend API on Windows.
 
@@ -131,7 +131,7 @@ ollama serve
 
 ```cmd
 # Navigate to project directory
-cd C:\Users\YourUsername\Downloads\medscreening
+cd C:\Users\YourUsername\Downloads\Vitalis
 
 # Verify backend directory exists
 dir backend
@@ -140,7 +140,7 @@ dir backend
 
 **If backend doesn't exist:**
 - Copy the backend folder from outputs/backend
-- Place it in: medscreening/backend
+- Place it in: Vitalis/backend
 
 ### Step 2: Create Virtual Environment
 
@@ -160,7 +160,7 @@ venv\Scripts\activate
 **Verify activation:**
 ```cmd
 where python
-# Should show: C:\...\medscreening\backend\venv\Scripts\python.exe
+# Should show: C:\...\Vitalis\backend\venv\Scripts\python.exe
 
 # NOT: C:\Users\...\AppData\Local\Programs\Python\...
 ```
@@ -665,7 +665,7 @@ FileNotFoundError: [Errno 2] No such file or directory: '../agents/patient_datab
 dir ..\agents\patient_database\data\vectordb
 
 # Update path in .env if needed
-PATIENT_DB_VECTOR_DIR=C:\path\to\medscreening\agents\patient_database\data\vectordb
+PATIENT_DB_VECTOR_DIR=C:\path\to\Vitalis\agents\patient_database\data\vectordb
 ```
 
 ### Issue 7: JWT Authentication Error
