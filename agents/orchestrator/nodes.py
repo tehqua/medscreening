@@ -322,7 +322,11 @@ class WorkflowNodes:
             
             response = chat(
                 model=self.config.model_name,
-                messages=messages
+                messages=messages,
+                options={
+                    "temperature": self.config.model_temperature,
+                    "num_predict": self.config.model_max_tokens,
+                }
             )
             
             agent_response = response.message.content

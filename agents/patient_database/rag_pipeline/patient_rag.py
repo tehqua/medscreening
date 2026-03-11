@@ -12,8 +12,10 @@ VECTOR_DB_DIR = os.path.abspath(VECTOR_DB_DIR)
 OLLAMA_EMBED_URL = "http://localhost:11434/api/embeddings"
 OLLAMA_EMBED_MODEL = "nomic-embed-text"
 
-# Embedding 
+
+# Embedding
 def embed_query(text: str) -> List[float]:
+    """Embed a single text string via Ollama API."""
     response = requests.post(
         OLLAMA_EMBED_URL,
         json={
@@ -30,7 +32,8 @@ def embed_query(text: str) -> List[float]:
     if "embedding" not in data:
         raise Exception(f"Invalid embedding response: {data}")
 
-    return data["embedding"] 
+    return data["embedding"]
+
 
 # Load Patient Index
 def load_patient_index(patient_id: str):
@@ -38,7 +41,7 @@ def load_patient_index(patient_id: str):
     metadata_path = os.path.join(VECTOR_DB_DIR, f"{patient_id}.pkl")
 
     if not os.path.exists(index_path):
-        raise Exception(f"Index not found for patient {patient_id}")
+        raise FileNotFoundError(f"No medical records index found for patient: {patient_id}")
 
     index = faiss.read_index(index_path)
 
@@ -47,46 +50,60 @@ def load_patient_index(patient_id: str):
 
     return index, documents
 
+
 # Core Retrieval
 def extract_year(query: str):
     match = re.search(r"(19|20)\d{2}", query)
     return match.group(0) if match else None
 
-def retrieve_patient_context(patient_id, query, top_k=3):
+
+def retrieve_patient_context(patient_id: str, query: str, top_k: int = 3) -> Dict:
+    """
+    Retrieve relevant medical records for a patient using FAISS semantic search.
+
+    FIX: Previously re-embedded ALL documents on every query (N HTTP calls).
+    Now uses index.reconstruct_n() to extract pre-computed vectors directly
+    from the FAISS .index file — only the query is embedded (1 HTTP call).
+    No migration or format changes needed.
+    """
     index, documents = load_patient_index(patient_id)
 
-    # Structured filter
-    year = extract_year(query)
-    filtered_docs = documents
-
-    if year:
-        filtered_docs = [
-            doc for doc in documents
-            if doc["metadata"].get("year") == year
-        ]
-
-    if len(filtered_docs) == 0:
-        filtered_docs = documents
-
-    # Build temporary FAISS index for filtered subset
-    vectors = np.array([
-        embed_query(doc["text"]) for doc in filtered_docs
-    ]).astype("float32")
-
-    faiss.normalize_L2(vectors)
-
-    temp_index = faiss.IndexFlatIP(vectors.shape[1])
-    temp_index.add(vectors)
-
+    # ✅ Embed only the query — 1 HTTP call regardless of number of docs
     query_vec = np.array([embed_query(query)]).astype("float32")
     faiss.normalize_L2(query_vec)
 
-    scores, indices = temp_index.search(query_vec, top_k)
+    year = extract_year(query)
 
-    retrieved_docs = [
-        filtered_docs[i] for i in indices[0]
-        if i < len(filtered_docs)
-    ]
+    if year:
+        # Get indices of documents matching the requested year
+        year_indices = [
+            i for i, doc in enumerate(documents)
+            if doc["metadata"].get("year") == year
+        ]
+
+        if year_indices:
+            # ✅ Reconstruct pre-computed vectors from .index file (no re-embed!)
+            # IndexFlatIP stores raw vectors — reconstruct_n() retrieves them directly.
+            all_vecs = index.reconstruct_n(0, index.ntotal)  # shape: (N, dim)
+            sub_vecs = np.array([all_vecs[i] for i in year_indices]).astype("float32")
+            # Vectors from build phase are already L2-normalized — no need to normalize again
+
+            temp_index = faiss.IndexFlatIP(sub_vecs.shape[1])
+            temp_index.add(sub_vecs)
+
+            scores, sub_ids = temp_index.search(query_vec, min(top_k, len(year_indices)))
+            retrieved_docs = [
+                documents[year_indices[i]] for i in sub_ids[0]
+                if i < len(year_indices)
+            ]
+        else:
+            # Fallback: no documents match the year → search entire index
+            scores, ids = index.search(query_vec, top_k)
+            retrieved_docs = [documents[i] for i in ids[0] if i < len(documents)]
+    else:
+        # No year filter → search the pre-built index directly
+        scores, ids = index.search(query_vec, top_k)
+        retrieved_docs = [documents[i] for i in ids[0] if i < len(documents)]
 
     context_text = "\n\n".join([doc["text"] for doc in retrieved_docs])
 
